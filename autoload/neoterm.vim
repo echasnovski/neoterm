@@ -65,7 +65,7 @@ function! neoterm#open(...) abort
       let l:instance.mod = l:opts.mod
     end
 
-    let l:instance.origin = neoterm#origin#new()
+    let l:instance.origin.last_buffer_id = neoterm#origin#new()
     call s:create_window(l:instance)
     call s:after_open(l:instance)
 

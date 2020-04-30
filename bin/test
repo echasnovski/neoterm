@@ -5,18 +5,45 @@ _pwd() {
   pwd
 }
 
+_vim() {
+  VIMBIN="vim vim -T dumb --not-a-term -u ${PLUGIN_PATH}/test-config/vim/vimrc"
+
+  _test
+}
+
+_nvim() {
+  VIMBIN="nvim --headless"
+  XDG_CONFIG_HOME="${PLUGIN_PATH}/test-config"
+  export XDG_CONFIG_HOME
+
+  _test
+}
+
+_test() {
+  $VIMBIN +"VMTestRun neoterm" +"VMTestQuit"
+}
+
 [ "$PLUGIN_PATH" = "" ] && PLUGIN_PATH="$(_pwd "$(dirname "$0")/..")"
 [ "$VMTEST_PATH" = "" ] && VMTEST_PATH="$(_pwd "${PLUGIN_PATH}/../vmtest")"
 
 export PLUGIN_PATH
 export VMTEST_PATH
 
-if [ "$1" = "vim" ]; then
-  VIMBIN="vim vim -T dumb --not-a-term -u ${PLUGIN_PATH}/test-config/vim/vimrc"
-else
-  VIMBIN="nvim --headless"
-  XDG_CONFIG_HOME="${PLUGIN_PATH}/test-config"
-  export XDG_CONFIG_HOME
-fi
-
-$VIMBIN +"VMTestRun neoterm" +"VMTestQuit"
+case "$1" in
+  vim)
+    _vim
+    ;;
+  all)
+    echo "---"
+    echo "vim"
+    echo "---"
+    _vim
+    echo "------"
+    echo "neovim"
+    echo "------"
+    _nvim
+    ;;
+  *)
+    _nvim
+    ;;
+esac
